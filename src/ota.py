@@ -67,7 +67,7 @@ def get_local_version():
 
 def get_remote_version():
     try:
-        response = urequests.get(REMOTE_VERSION_URL)
+        response = urequests.get(f'RAW_BASE_URL{/versions.txt}')
         if response.status_code == 200:
             return response.text.strip()
     except Exception as e:
