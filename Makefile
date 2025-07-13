@@ -32,7 +32,10 @@ flash:
 	done
 
 clean:
-	rm -rf $(BUILD_DIR)
+	@echo "Cleaning files on ESP32..."
+	@$(MPREMOTE) exec "import os; [os.remove(f) for f in os.listdir() if not f.startswith('.')]"
+	@echo "Cleaning local build directory..."
+	@rm -rf $(BUILD_DIR)
 
 repl:
 	$(MPREMOTE) repl

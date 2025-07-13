@@ -14,10 +14,7 @@ headers = {
 
 def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
-    # Wifi state can get stuck if reinitiated multiple times: set to False and then True
-    sta.active(False)
-    time.sleep(1)
-    sta.active(True)
+    wlan.active(True)
     if not wlan.isconnected():
         print("Connecting to Wi-Fi...")
         wlan.connect(SSID, PASSWORD)
@@ -38,7 +35,7 @@ def fetch_file_list():
             # Get all files of interest. Secrets.py is ignored, it should be updated locally
             return [file['name'] for file in r.json() if file['type'] == 'file' and file['name'] != "secrets.py"]
         else:
-            print("Failed to fetch file list:", r.status_code, r.text)
+            print(f"Failed to fetch file list: {r}")
             return []
     except Exception as e:
         print("Error during file list fetch:", e)
@@ -48,13 +45,13 @@ def download_file(name):
     try:
         url = f"{RAW_BASE_URL}/{name}"
         print(f"Downloading {url}...")
-        r = requests.get(url, headers=headers)
+        r = requests.get(url)
         if r.status_code == 200:
             with open(name, "w") as f:
                 f.write(r.text)
             print(f"Updated: {name}")
         else:
-            print(f"Failed to download {name}: status {r.status_code}")
+            print(f"Failed to download {name}: status {r.status_code}, text: {r.text}")
         r.close()
     except Exception as e:
         print(f"Error downloading {name}: {e}")
