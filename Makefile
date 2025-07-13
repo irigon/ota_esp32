@@ -6,7 +6,7 @@ MPY_CROSS = mpy-cross
 MPREMOTE = mpremote
 
 # Files that MUST stay as .py for MicroPython to auto-run
-ENTRY_PY_FILES = boot.py main.py
+ENTRY_PY_FILES = boot.py main.py versions.txt
 
 .PHONY: all compile flash clean repl
 
@@ -14,7 +14,7 @@ all: compile flash
 
 compile:
 	@mkdir -p $(BUILD_DIR)
-	@for file in $(SRC_DIR)/*.py; do \
+	@for file in $(SRC_DIR)/*.py $(SRC_DIR)/*.txt; do \
 		base=$$(basename $$file); \
 		if echo "$(ENTRY_PY_FILES)" | grep -wq "$$base"; then \
 			echo "Copying $$file (not compiling)..."; \

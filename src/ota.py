@@ -26,6 +26,11 @@ def connect_wifi():
             timeout -= 1
     if wlan.isconnected():
         print("Wi-Fi connected:", wlan.ifconfig())
+        try:
+            print("Syncing time...")
+            ntptime.settime()
+        except:
+            print("NTP sync failed")
     else:
         raise RuntimeError("Wi-Fi connection failed.")
 
@@ -67,11 +72,11 @@ def get_local_version():
 
 def get_remote_version():
     try:
-        response = urequests.get(f'RAW_BASE_URL{/versions.txt}')
+        response = requests.get(f'{RAW_BASE_URL}/{LOCAL_VERSION_FILE}', headers=headers)
         if response.status_code == 200:
             return response.text.strip()
     except Exception as e:
-        print("Failed to fetch remote version:", e)
+        print(f"Failed to fetch remote version:", e)
     return None
 
 def is_update_needed():
