@@ -8,6 +8,8 @@ from secrets import SSID, PASSWORD
 
 GITHUB_API_URL = "https://api.github.com/repos/irigon/ota_esp32/contents/src"
 RAW_BASE_URL = "https://raw.githubusercontent.com/irigon/ota_esp32/master/src"
+LOCAL_VERSION_FILE = "version.txt"
+
 headers = {
     "User-Agent": "ESP32-MicroPython"
 }
@@ -56,18 +58,31 @@ def download_file(name):
     except Exception as e:
         print(f"Error downloading {name}: {e}")
 
-def run_ota():
+def get_local_version():
     try:
-        connect_wifi()
-        files = fetch_file_list()
-        if not files:
-            print("No files to update.")
-            return
-        for fname in files:
-            download_file(fname)
-        print("OTA update complete. Rebooting...")
-        time.sleep(2)
-        machine.reset()
+        with open(LOCAL_VERSION_FILE) as f:
+            return f.read().strip()
+    except OSError:
+        return "0.0.0"
+
+def get_remote_version():
+    try:
+        response = urequests.get(REMOTE_VERSION_URL)
+        if response.status_code == 200:
+            return response.text.strip()
     except Exception as e:
-        print("OTA update failed:", e)
+        print("Failed to fetch remote version:", e)
+    return None
+
+def is_update_needed():
+    local = get_local_version()
+    remote = get_remote_version()
+    print(f"Local version: {local}, Remote version: {remote}")
+    if remote is None:
+        return False
+    return remote > local  # simple string comparison, e.g. "1.2.1" > "1.1.9"
+
+def update_local_version(remote_version):
+    with open(LOCAL_VERSION_FILE, "w") as f:
+        f.write(remote_version)
 
