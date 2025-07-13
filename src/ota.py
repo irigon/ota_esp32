@@ -8,10 +8,16 @@ from secrets import SSID, PASSWORD
 
 GITHUB_API_URL = "https://api.github.com/repos/irigon/ota_esp32/contents/src"
 RAW_BASE_URL = "https://raw.githubusercontent.com/irigon/ota_esp32/master/src"
+headers = {
+    "User-Agent": "ESP32-MicroPython"
+}
 
 def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
-    wlan.active(True)
+    # Wifi state can get stuck if reinitiated multiple times: set to False and then True
+    sta.active(False)
+    time.sleep(1)
+    sta.active(True)
     if not wlan.isconnected():
         print("Connecting to Wi-Fi...")
         wlan.connect(SSID, PASSWORD)
@@ -27,11 +33,12 @@ def connect_wifi():
 def fetch_file_list():
     try:
         print("Fetching file list from GitHub...")
-        r = requests.get(GITHUB_API_URL)
+        r = requests.get(GITHUB_API_URL, headers=headers)
         if r.status_code == 200:
-            return [file['name'] for file in r.json() if file['type'] == 'file']
+            # Get all files of interest. Secrets.py is ignored, it should be updated locally
+            return [file['name'] for file in r.json() if file['type'] == 'file' and file['name'] != "secrets.py"]
         else:
-            print("Failed to fetch file list:", r.status_code)
+            print("Failed to fetch file list:", r.status_code, r.text)
             return []
     except Exception as e:
         print("Error during file list fetch:", e)
@@ -41,7 +48,7 @@ def download_file(name):
     try:
         url = f"{RAW_BASE_URL}/{name}"
         print(f"Downloading {url}...")
-        r = requests.get(url)
+        r = requests.get(url, headers=headers)
         if r.status_code == 200:
             with open(name, "w") as f:
                 f.write(r.text)
