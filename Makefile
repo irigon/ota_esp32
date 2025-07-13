@@ -6,7 +6,7 @@ MPY_CROSS = mpy-cross
 MPREMOTE = mpremote
 
 # Files that MUST stay as .py for MicroPython to auto-run
-ENTRY_PY_FILES = boot.py main.py versions.txt
+ENTRY_PY_FILES = boot.py main.py version.txt
 
 .PHONY: all compile flash clean repl
 
