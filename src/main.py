@@ -1,9 +1,4 @@
-from machine import Pin
-import time
+# src/main.py
+import ota
 
-led = Pin(2, Pin.OUT)
-
-while True:
-    led.toggle()
-    time.sleep(0.5)
-
+ota.run_ota()
