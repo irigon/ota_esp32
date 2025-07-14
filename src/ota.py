@@ -2,7 +2,6 @@ import network
 import urequests as requests
 import machine
 import time
-import json
 
 from secrets import SSID, PASSWORD
 
@@ -26,11 +25,6 @@ def connect_wifi():
             timeout -= 1
     if wlan.isconnected():
         print("Wi-Fi connected:", wlan.ifconfig())
-        try:
-            print("Syncing time...")
-            ntptime.settime()
-        except:
-            print("NTP sync failed")
     else:
         raise RuntimeError("Wi-Fi connection failed.")
 
@@ -49,7 +43,7 @@ def is_update_needed():
             if response.status_code == 200:
                 return response.text.strip()
         except Exception as e:
-            print(f"Failed to fetch remote version:", e)
+            print("Failed to fetch remote version:", e)
         return None
 
     local = get_local_version()
