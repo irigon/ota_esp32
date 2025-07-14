@@ -13,6 +13,10 @@ ENTRY_PY_FILES = boot.py main.py version.txt
 all: compile flash
 
 compile:
+	@if [ ! -f $(SRC_DIR)/secrets.py ]; then \
+		echo "\033[1;31mERROR: $(SRC_DIR)/secrets.py not found! OTA and Wi-Fi will not work. Use /src/secrets.py.template for it.\033[0m"; \
+		exit 1; \
+	fi
 	@mkdir -p $(BUILD_DIR)
 	@for file in $(SRC_DIR)/*.py $(SRC_DIR)/*.txt; do \
 		base=$$(basename $$file); \
