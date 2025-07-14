@@ -19,10 +19,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install linting tool (micropython-lint)
+      - name: Install linting tool (pyflakes)
         run: |
-          pip install micropython-lint
+          pip install pyflakes
 
-      - name: Check syntax with mpylint
+      - name: Check syntax with pyflakes
         run: |
-          mpylint src/
+          pyflakes src/
