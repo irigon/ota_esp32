@@ -1,4 +1,5 @@
 import ota
+import time
 
 try:
     ota.connect_wifi()

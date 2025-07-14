@@ -72,7 +72,7 @@ def get_local_version():
 
 def get_remote_version():
     try:
-        response = requests.get(f'{RAW_BASE_URL}/{LOCAL_VERSION_FILE}', headers=headers)
+        response = requests.get(f'{RAW_BASE_URL}/{LOCAL_VERSION_FILE}?ts={time.time()}', headers=headers)
         if response.status_code == 200:
             return response.text.strip()
     except Exception as e:
